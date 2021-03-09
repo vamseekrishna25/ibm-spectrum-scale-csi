@@ -272,7 +272,7 @@ func (cs *ScaleControllerServer) createFilesetBasedVol(scVol *scaleVolume) (stri
 	if err != nil {
 		if strings.Contains(err.Error(), "Invalid value in 'filesetName'") {
 			// This means fileset is not present, create it
-			fseterr := scVol.Connector.CreateFileset(scVol.VolBackendFs, scVol.VolName, opt)
+			fseterr := scVol.Connector.CreateFileset(scVol.VolBackendFs, scVol.VolName, opt, scVol.IAMmode)
 
 			if fseterr != nil {
 				// fileset creation failed return without cleanup

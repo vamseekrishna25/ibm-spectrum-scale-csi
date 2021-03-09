@@ -53,6 +53,7 @@ type scaleVolume struct {
 	PrimaryFSMount     string                            `json:"primaryFSMount"`
 	ParentFileset      string                            `json:"parentFileset"`
 	LocalFS            string                            `json:"localFS"`
+	IAMmode            string                            `json:"IAMmode"`
 }
 
 type scaleVolId struct {
@@ -78,6 +79,7 @@ func getScaleVolumeOptions(volOptions map[string]string) (*scaleVolume, error) {
 	fsType, fsTypeSpecified := volOptions[connectors.UserSpecifiedFilesetType]
 	inodeLim, inodeLimSpecified := volOptions[connectors.UserSpecifiedInodeLimit]
 	parentFileset, isparentFilesetSpecified := volOptions[connectors.UserSpecifiedParentFset]
+	iamMode, iamModeSpecified := volOptions["IamMode"]
 
 	// Handling empty values
 	scaleVol.VolDirBasePath = ""
@@ -130,6 +132,9 @@ func getScaleVolumeOptions(volOptions map[string]string) (*scaleVolume, error) {
 	}
 	if clusterIDSpecified && clusterID != "" {
 		scaleVol.ClusterId = clusterID
+	}
+	if iamModeSpecified && iamMode != "" {
+		scaleVol.IAMmode = iamMode
 	}
 
 	if volDirPathSpecified {

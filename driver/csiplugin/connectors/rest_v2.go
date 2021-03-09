@@ -246,12 +246,23 @@ func (s *spectrumRestV2) GetFilesystemMountpoint(filesystemName string) (string,
 	}
 }
 
-func (s *spectrumRestV2) CreateFileset(filesystemName string, filesetName string, opts map[string]interface{}) error {
+func (s *spectrumRestV2) CreateFileset(filesystemName string, filesetName string, opts map[string]interface{}, iamMode string) error {
 	glog.V(4).Infof("rest_v2 CreateFileset. filesystem: %s, fileset: %s, opts: %v", filesystemName, filesetName, opts)
 
 	filesetreq := CreateFilesetRequest{}
 	filesetreq.FilesetName = filesetName
 	filesetreq.Comment = "Fileset created by IBM Container Storage Interface driver"
+
+	//if iamMode is specified then we are creating immutable fileset by setting the iamMode of the fileset
+	if iamMode != "off" && iamMode != "" {
+		if iamMode == "advisory" || iamMode == "noncompliant" || iamMode == "compliant" || iamMode == "compliant-plus" {
+			filesetreq.IamMode = iamMode
+		} else {
+			glog.Errorf("cannot create immutable fileset due to invalid iamMode arguments")
+			return status.Error(codes.InvalidArgument, "InValid iamMode argument given")
+		}
+
+	}
 
 	filesetType, filesetTypeSpecified := opts[UserSpecifiedFilesetType]
 	inodeLimit, inodeLimitSpecified := opts[UserSpecifiedInodeLimit]
